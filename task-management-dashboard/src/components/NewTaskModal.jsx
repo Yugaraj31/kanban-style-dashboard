@@ -11,45 +11,53 @@ const NewTaskModal = ({ onSave, onClose }) => {
   };
 
   return (
-    <div className="modal-container">
+    <div className="modal-overlay">
       <div className="modal-content">
         <h2 className="modal-header">New Task</h2>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <input
-            className="input-field"
-            placeholder="Title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            required
-          />
-          <textarea
-            className="textarea-field"
-            placeholder="Description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          />
-          <select
-            className="select-field"
-            value={status}
-            onChange={(e) => setStatus(e.target.value)}
-          >
-            <option>To Do</option>
-            <option>In Progress</option>
-            <option>Done</option>
-          </select>
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label className="form-label">Title</label>
+            <input
+              type="text"
+              className="form-input"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label className="form-label">Description</label>
+            <textarea
+              className="form-input form-textarea"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+          </div>
+          <div className="form-group">
+            <label className="form-label">Status</label>
+            <select
+              className="form-input"
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+            >
+              <option>To Do</option>
+              <option>In Progress</option>
+              <option>Done</option>
+            </select>
+          </div>
           <div className="modal-footer">
             <button
               type="button"
               onClick={onClose}
-              className="cancel-button"
+              className="btn btn-secondary"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="add-button"
+              className="btn btn-primary"
             >
-              Add
+              Add Task
             </button>
           </div>
         </form>

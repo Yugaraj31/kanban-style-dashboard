@@ -5,14 +5,14 @@ const Task = ({ task, index, draggableId }) => {
   return (
     <Draggable draggableId={draggableId} index={index}>
       {(provided) => (
-        <div 
-          className="bg-white p-4 rounded shadow mb-2"
+        <div
+          className="task"
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
         >
-          <h4 className="font-bold">{task.title}</h4>
-          <p className="text-sm text-gray-600">{task.description}</p>
+          <h3 className="task-title">{task.title}</h3>
+          <p className="task-description">{task.description}</p>
         </div>
       )}
     </Draggable>

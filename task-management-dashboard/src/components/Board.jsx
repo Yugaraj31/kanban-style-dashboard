@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import { DragDropContext, Droppable } from '@hello-pangea/dnd';
 import { getTasks, createTask, updateTask } from '../api/api';
-import Column from './Column';
 import NewTaskModal from './NewTaskModal';
-import TaskTable from './TaskTable'; // Import TaskTable
-import { DragDropContext } from '@hello-pangea/dnd';
+import Task from './Task';
 
 const Board = () => {
   const [tasks, setTasks] = useState([]);
@@ -55,43 +54,84 @@ const Board = () => {
     'Done': tasks.filter(task => task.status === 'Done')
   };
 
-  return (
-    <div className="min-h-screen flex justify-center items-center bg-gray-100 py-8">
-      <div className="w-full max-w-6xl px-8 bg-white shadow-lg rounded-lg">
-        <div className="flex justify-between items-center mb-4">
-          <h1 className="text-3xl font-bold">Task Management Dashboard</h1>
-          <div className="flex gap-4">
+    return (
+      <div className="board-container">
+        <div className="dashboard-header">
+          <h1 className="text-2xl font-bold">Task Management Dashboard</h1>
+          <div className="flex gap-2">
             <button
               onClick={() => setShowModal(true)}
-              className="bg-green-500 text-white p-2 rounded"
+              className="btn btn-primary"
             >
               Add New Task
             </button>
             <button
-              onClick={() => setIsTableView(!isTableView)} // Toggle table view
-              className="bg-blue-500 text-white p-2 rounded"
+              onClick={() => setIsTableView(!isTableView)}
+              className="btn btn-secondary"
             >
               {isTableView ? "Switch to Kanban View" : "Switch to Table View"}
             </button>
           </div>
         </div>
-
-        {showModal && <NewTaskModal onSave={handleNewTask} onClose={() => setShowModal(false)} />}
-
+  
+        {showModal && (
+          <NewTaskModal 
+            onSave={handleNewTask} 
+            onClose={() => setShowModal(false)} 
+          />
+        )}
+  
         {isTableView ? (
-          <TaskTable tasks={tasks} /> // Render table view if isTableView is true
+          <table className="task-table">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {tasks.map(task => (
+                <tr key={task.id}>
+                  <td>{task.title}</td>
+                  <td>{task.description}</td>
+                  <td>{task.status}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         ) : (
           <DragDropContext onDragEnd={onDragEnd}>
-            <div className="flex gap-4">
+            <div className="columns-container">
               {Object.entries(columns).map(([columnId, columnTasks]) => (
-                <Column key={columnId} columnId={columnId} title={columnId} tasks={columnTasks} />
+                <div key={columnId} className="column">
+                  <h2 className="column-header">{columnId}</h2>
+                  <Droppable droppableId={columnId}>
+                    {(provided) => (
+                      <div
+                        {...provided.droppableProps}
+                        ref={provided.innerRef}
+                        className="tasks-list"
+                      >
+                        {columnTasks.map((task, index) => (
+                          <Task 
+                            key={task.id} 
+                            task={task} 
+                            index={index} 
+                            draggableId={task.id.toString()} 
+                          />
+                        ))}
+                        {provided.placeholder}
+                      </div>
+                    )}
+                  </Droppable>
+                </div>
               ))}
             </div>
           </DragDropContext>
         )}
       </div>
-    </div>
-  );
-};
+    );
+  };
 
 export default Board;
